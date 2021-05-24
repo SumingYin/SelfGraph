@@ -131,7 +131,7 @@ public class SelfGraph {
             return null;
         } else if (Matrix.length != Matrix[0].length) {
             return null;
-        } else if (names.size() != n) {
+        } else if (names ==null || names.size() != n) {
             return null;
         }
 
