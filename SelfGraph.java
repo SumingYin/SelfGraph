@@ -48,7 +48,7 @@ public class SelfGraph {
                 }
             }
         }
-
+        // 1.邻接矩阵的方式
         selfGraph.createDirectedGraph(nodeNum, nodes);
         System.out.println(selfGraph);
 
@@ -61,6 +61,32 @@ public class SelfGraph {
         Node node2 = selfGraph.get("2");
         double node2len = selfGraph.get2NodesLength(node1,node2);
         System.out.println(node2len);
+
+        // 2.逐个加入节点的方式，可在邻接矩阵的基础上，进行添加或删除节点、添加边
+        SelfGraph selfGraph1 = new SelfGraph();
+        for (int i = 0; i < 10; i++) {
+            selfGraph1.addNewNode("" + i);
+        }
+
+        // 添加边
+        // 1.根据名称添加边
+        selfGraph1.addNextEdge("1","2",10);
+        selfGraph1.addNextEdge("3","2",8);
+        selfGraph1.addNextEdge("3","4",3);
+        selfGraph1.addNextEdge("5","6",1);
+        selfGraph1.addNextEdge("7","9",5);
+
+        // 2.根据名称数组添加边
+        List<String> stringList = new ArrayList<>();
+        ArrayList<Double> doubles = new ArrayList<>();
+        for (int i = 1; i < 4; i++) {
+            stringList.add(i+"");
+            doubles.add((double)i);
+        }
+
+        selfGraph1.addNextEdge("8",stringList,doubles);
+        System.out.println(selfGraph1);
+
 
     }
 
@@ -96,10 +122,10 @@ public class SelfGraph {
         }
         if (set.size() != n) {
             System.out.println("存在重复的元素");
-            graphNodesMap = new HashMap<>();
-            nodeHashName = new HashMap<>();
             defaultName = 0;
             nodeNums = 0;
+            graphNodesMap = new HashMap<>();
+            nodeHashName = new HashMap<>();
             return null;
         }
 
@@ -158,10 +184,10 @@ public class SelfGraph {
         }
         if (set.size() != n) {
             System.out.println("存在重复的元素");
-            graphNodesMap = new HashMap<>();
-            nodeHashName = new HashMap<>();
             defaultName = 0;
             nodeNums = 0;
+            graphNodesMap = new HashMap<>();
+            nodeHashName = new HashMap<>();
             return null;
         }
 
@@ -220,7 +246,7 @@ public class SelfGraph {
      * @return
      */
     public boolean addNextEdge(Node startNode, Node endNode, double len) {
-        if (startNode == null || endNode == null || !graphNodesMap.containsValue(startNode) || graphNodesMap.containsValue(endNode) || len <= 0) {
+        if (startNode == null || endNode == null || !graphNodesMap.containsValue(startNode) || !graphNodesMap.containsValue(endNode) || len <= 0) {
             return false;
         }
         List<Node> list = new ArrayList<>();
@@ -230,12 +256,56 @@ public class SelfGraph {
         return addNextEdge(startNode, list, list1);
     }
 
+
     // 同过给定名字的方式添加节点
     public boolean addNextEdge(String startName, String endName, double len) {
         if (endName == null || startName == null || startName.length() == 0 || endName.length() == 0 || len <= 0) {
             return false;
         }
         return addNextEdge(graphNodesMap.get(startName), graphNodesMap.get(endName), len);
+    }
+
+    public boolean addNextEdge(String startName ,List<String> endNames,List<Double> lengths){
+        if(startName == null || endNames == null || lengths == null){
+            return false;
+        }else if(!graphNodesMap.containsKey(startName)){
+            return false;
+        }
+        int size = endNames.size();
+        int lenSize = lengths.size();
+        if(size != lenSize){
+            return false;
+        }
+
+        // 需要先检查所有添加的边是否符合条件
+        for (int i = 0; i < size; i++) {
+            String endName = endNames.get(i);
+            Double aDouble = lengths.get(i);
+            if (endName != null && graphNodesMap.containsKey(endName) && aDouble != null && aDouble > 0) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+
+        // 全部符合条件后添加
+        Node startNode = graphNodesMap.get(startName);
+        for (int i = 0; i < size; i++) {
+            Node endNode = graphNodesMap.get(endNames.get(i));
+            Double aDouble = lengths.get(i);
+            Edge edge = new Edge(startNode, endNode, aDouble);
+            if (startNode.edgesMap.containsKey(endNode)) {
+                continue;
+            } else {
+                // 必须呈三组出现
+                startNode.nextNodeList.add(endNode);
+                endNode.preNodeList.add(startNode);
+                startNode.edgesMap.put(endNode, edge);
+            }
+
+        }
+        return true;
+
     }
 
     public boolean addNextEdge(Node startNode, List<Node> endNodes, List<Double> lengths) {
@@ -245,11 +315,15 @@ public class SelfGraph {
             return false;
         }
         int size = endNodes.size();
+        int lenSize = lengths.size();
+        if(size != lenSize){
+            return false;
+        }
         // 需要先检查所有添加的边是否符合条件
         for (int i = 0; i < size; i++) {
             Node endNode = endNodes.get(i);
             Double aDouble = lengths.get(i);
-            if (endNode != null && graphNodesMap.containsValue(endNode) && aDouble > 0) {
+            if (endNode != null && graphNodesMap.containsValue(endNode) && aDouble != null && aDouble > 0) {
                 continue;
             } else {
                 return false;
@@ -291,7 +365,7 @@ public class SelfGraph {
         for (int i = 0; i < size; i++) {
             Node startNode = preNodes.get(i);
             Double aDouble = lengths.get(i);
-            if (startNode != null && graphNodesMap.containsValue(startNode) && aDouble > 0) {
+            if (startNode != null && graphNodesMap.containsValue(startNode) && aDouble != null && aDouble > 0) {
                 continue;
             } else {
                 return false;
@@ -318,7 +392,7 @@ public class SelfGraph {
 
     public boolean addPreEdge(Node endNode, Node startNode, double len) {
 
-        if (startNode == null || endNode == null || !graphNodesMap.containsValue(startNode) || graphNodesMap.containsValue(endNode) || len <= 0) {
+        if (startNode == null || endNode == null || !graphNodesMap.containsValue(startNode) || !graphNodesMap.containsValue(endNode) || len <= 0) {
             return false;
         }
         List<Node> list = new ArrayList<>();
@@ -326,6 +400,48 @@ public class SelfGraph {
         list.add(startNode);
         list1.add(len);
         return addNextEdge(endNode, list, list1);
+
+    }
+    public boolean addPreEdge(String endName ,List<String> startNames,List<Double> lengths){
+        if(endName == null || startNames == null || lengths == null){
+            return false;
+        }else if(!graphNodesMap.containsKey(endName)){
+            return false;
+        }
+        int size = startNames.size();
+        int lenSize = lengths.size();
+        if(size != lenSize){
+            return false;
+        }
+
+        // 需要先检查所有添加的边是否符合条件
+        for (int i = 0; i < size; i++) {
+            String startName = startNames.get(i);
+            Double aDouble = lengths.get(i);
+            if (endName != null && graphNodesMap.containsKey(startName) && aDouble != null && aDouble > 0) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+
+        // 全部符合条件后添加
+        Node endNode = graphNodesMap.get(endName);
+        for (int i = 0; i < size; i++) {
+            Node startNode = graphNodesMap.get(startNames.get(i));
+            Double aDouble = lengths.get(i);
+            Edge edge = new Edge(startNode, endNode, aDouble);
+            if (startNode.edgesMap.containsKey(endNode)) {
+                continue;
+            } else {
+                // 必须呈三组出现
+                startNode.nextNodeList.add(endNode);
+                endNode.preNodeList.add(startNode);
+                startNode.edgesMap.put(endNode, edge);
+            }
+
+        }
+        return true;
 
     }
 
@@ -430,6 +546,8 @@ public class SelfGraph {
         String name = null;
 
         // 存储后继和前驱的所有节点
+        // 和二叉树很像，这里nextNodelist是该节点指向的下一个节点集合
+        // preNodeList 是所有指向它的节点
         List<Node> preNodeList = null;
         List<Node> nextNodeList = null;
 
