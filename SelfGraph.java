@@ -190,11 +190,12 @@ public class SelfGraph {
     }
 
     public boolean addNewNode(String name) {
-        defaultName++;
-        nodeNums++;
-        if (name == null || name.length() == 0) {
+        // 如果已经存在则无法添加成功
+        if (name == null || name.length() == 0 || graphNodesMap.containsKey(name)) {
             return false;
         }
+        defaultName++;
+        nodeNums++;
         Node node1 = new Node(name);
         graphNodesMap.put(name, node1);
         return true;
