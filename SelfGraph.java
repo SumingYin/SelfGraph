@@ -71,11 +71,12 @@ public class SelfGraph {
         // 节点的个数
         nodeNums = n;
         // 长度不为n，或长度为0，长度不相等，均返回null
-        if (Matrix.length != n || Matrix.length == 0) {
+        // 长度不为n，或长度为0，长度不相等，均返回null，命名的长度与n不相等
+        if (Matrix == null || Matrix.length != n ) {
             return null;
-        } else if (Matrix.length != Matrix[0].length) {
+        } else if (Matrix[0] == null || Matrix.length != Matrix[0].length) {
             return null;
-        }
+        } 
 
         Set<String> set = new HashSet<String>();
         // 首先将所有节点放到GraphNodesMap中
@@ -127,11 +128,12 @@ public class SelfGraph {
 
         nodeNums = n;
         // 长度不为n，或长度为0，长度不相等，均返回null，命名的长度与n不相等
-        if (Matrix.length != n || Matrix.length == 0) {
+        // 长度不为n，或长度为0，长度不相等，均返回null，命名的长度与n不相等
+        if (Matrix == null || Matrix.length != n ) {
             return null;
-        } else if (Matrix.length != Matrix[0].length) {
+        } else if (Matrix[0] == null || Matrix.length != Matrix[0].length) {
             return null;
-        } else if (names ==null || names.size() != n) {
+        }  else if (names ==null || names.size() != n) {
             return null;
         }
 
