@@ -20,10 +20,8 @@ public class SelfGraph {
     // 哈希表存储节点name与idx之间的关系
     // 不应该存在name相同的节点
 
-    // 只有当所有创建的节点存在名字的时候，下面两个数据结构才会发挥作用
-    // 否则当String 为null 的时候，难以应用
-    // 这两个节点是为了方便获取节点的引用和名字
-    // 为什么不用索引，因为当出现添加删除操作的时候会出先问题
+   
+    // 为了方便获取节点的引用和名字
     HashMap<Node, String> nodeHashName = null;
 
 
