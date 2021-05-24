@@ -96,6 +96,10 @@ public class SelfGraph {
         }
         if (set.size() != n) {
             System.out.println("存在重复的元素");
+            graphNodesMap = new HashMap<>();
+            nodeHashName = new HashMap<>();
+            defaultName = 0;
+            nodeNums = 0;
             return null;
         }
 
@@ -154,6 +158,10 @@ public class SelfGraph {
         }
         if (set.size() != n) {
             System.out.println("存在重复的元素");
+            graphNodesMap = new HashMap<>();
+            nodeHashName = new HashMap<>();
+            defaultName = 0;
+            nodeNums = 0;
             return null;
         }
 
