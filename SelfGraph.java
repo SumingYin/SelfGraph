@@ -20,7 +20,7 @@ public class SelfGraph {
     // 哈希表存储节点name与idx之间的关系
     // 不应该存在name相同的节点
 
-   
+
     // 为了方便获取节点的引用和名字
     HashMap<Node, String> nodeHashName = null;
 
@@ -35,17 +35,16 @@ public class SelfGraph {
         SelfGraph selfGraph = new SelfGraph();
         int nodeNum = 5;
         double[][] nodes = new double[nodeNum][nodeNum];
-
+        Random random = new Random();
+        random.setSeed(1);
         for (int i = 0; i < nodeNum; i++) {
             for (int j = 0; j < nodeNum; j++) {
-
-                Random random = new Random();
-                int num = random.nextInt(2);
+                int num = random.nextInt(10);
                 if (num > 0) {
                     if (i == j && num > 0) {
                         continue;
                     }
-                    nodes[i][j] = 1;
+                    nodes[i][j] = num;
                 }
             }
         }
@@ -57,6 +56,11 @@ public class SelfGraph {
         根据名字查到两者节点的索引，这两个节点之间的长度是多少
         根据index查到两个节点引用，这两个几点之间的长度是多少
          */
+
+        Node node1 = selfGraph.get("1");
+        Node node2 = selfGraph.get("2");
+        double node2len = selfGraph.get2NodesLength(node1,node2);
+        System.out.println(node2len);
 
     }
 
@@ -71,12 +75,11 @@ public class SelfGraph {
         // 节点的个数
         nodeNums = n;
         // 长度不为n，或长度为0，长度不相等，均返回null
-        // 长度不为n，或长度为0，长度不相等，均返回null，命名的长度与n不相等
         if (Matrix == null || Matrix.length != n ) {
             return null;
         } else if (Matrix[0] == null || Matrix.length != Matrix[0].length) {
             return null;
-        } 
+        }
 
         Set<String> set = new HashSet<String>();
         // 首先将所有节点放到GraphNodesMap中
@@ -128,12 +131,11 @@ public class SelfGraph {
 
         nodeNums = n;
         // 长度不为n，或长度为0，长度不相等，均返回null，命名的长度与n不相等
-        // 长度不为n，或长度为0，长度不相等，均返回null，命名的长度与n不相等
         if (Matrix == null || Matrix.length != n ) {
             return null;
         } else if (Matrix[0] == null || Matrix.length != Matrix[0].length) {
             return null;
-        }  else if (names ==null || names.size() != n) {
+        } else if (names == null || names.size() != n) {
             return null;
         }
 
@@ -192,7 +194,7 @@ public class SelfGraph {
     }
 
     public boolean addNewNode(String name) {
-        // 如果已经存在则无法添加成功
+
         if (name == null || name.length() == 0 || graphNodesMap.containsKey(name)) {
             return false;
         }
@@ -363,7 +365,7 @@ public class SelfGraph {
     // 根据名字进行删除
     public boolean delete(String name) {
         // 删除其所有与之相关节点之间的联系
-        if(name == null || name.length()==0 || !nodeHashName.containsValue(name)){
+        if (name == null || name.length() == 0 || !nodeHashName.containsValue(name)) {
             return false;
         }
 
@@ -384,18 +386,25 @@ public class SelfGraph {
     // 根据传入的两个节点名字的获取长度
     // 根据传入的两个节点的引用获取长度
     public double get2NodesLength(String startName, String endName) {
+        if(startName == null || endName == null || !graphNodesMap.containsKey(startName) || !graphNodesMap.containsKey(endName)){
+            return -1.0;
+        }
         return get2NodesLength(graphNodesMap.get(startName), graphNodesMap.get(endName));
     }
 
     public double get2NodesLength(Node startNode, Node endNode) {
 
         if (startNode == null || endNode == null || !graphNodesMap.containsValue(startNode) || !graphNodesMap.containsValue(endNode)) {
-            // 返回负数，说明出错了
+            // 返回负数，说明出错
             return -1.0;
         }
 
         HashMap<Node, Edge> edgesMap = startNode.edgesMap;
         Edge edge = edgesMap.get(endNode);
+        if(edge == null){
+            // 说明两者之间不存在边
+            return 0;
+        }
         return edge.length;
 
     }
