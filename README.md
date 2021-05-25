@@ -34,6 +34,7 @@ public boolean addPreEdge(String endName ,List<String> startNames,List<Double> l
 public boolean addPreEdge(Node endNode, List<Node> startNodes, List<Double> lengths)
 
 删除节点
+  
 public boolean delete(Node node)
   
 public boolean delete(String name)
