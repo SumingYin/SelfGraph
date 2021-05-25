@@ -108,6 +108,7 @@ public class SelfGraph {
         Matrix[3][4] = 1;
         Matrix[3][5] = 1;
         Matrix[4][5] = 2;
+        Matrix[5][1] = 3;
         // 创建图
         selfGraph.createDirectedGraph(6,Matrix);
 
@@ -115,7 +116,7 @@ public class SelfGraph {
         System.out.println(selfGraph.graphHasCircle());
 
         // 测试最短路径
-        System.out.println(selfGraph.shortestPath2Nodes("2","5",selfGraph.graphHasCircle()));
+        //System.out.println(selfGraph.shortestPath2Nodes("2","5",selfGraph.graphHasCircle()));
 
         System.out.println(selfGraph);
 
@@ -610,7 +611,7 @@ public class SelfGraph {
     public boolean depthFirstSearch(SelfGraph selfGraph,Node node) {
 
         HashMap<String, Node> graphNodesMap = selfGraph.graphNodesMap;
-        if (selfGraph != null || graphNodesMap == null || !graphNodesMap.containsValue(node)) {
+        if (selfGraph == null || graphNodesMap == null || !graphNodesMap.containsValue(node)) {
             return false;
         }
 
@@ -653,7 +654,7 @@ public class SelfGraph {
             return false;
         }
         HashMap<String, Node> graphNodesMap = selfGraph.graphNodesMap;
-        if( startEndNode == null || graphNodesMap == null || graphNodesMap.containsValue(startEndNode)){
+        if( startEndNode == null || graphNodesMap == null || !graphNodesMap.containsValue(startEndNode)){
             return false;
         }
         // 重新设置是否访问
