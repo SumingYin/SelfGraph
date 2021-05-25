@@ -48,3 +48,23 @@ public Node get(String name)
 public double get2NodesLength(String startName, String endName)
   
 public double get2NodesLength(String startName, String endName)
+  
+深度遍历
+  
+public boolean depthFirstSearch(SelfGraph selfGraph, String name)
+  
+public boolean depthFirstSearch(String name)
+  
+public boolean depthFirstSearch(SelfGraph selfGraph,Node node)
+  
+以其中一个节点为起始和终止节点的环
+  
+public boolean nodeHasCircle(SelfGraph selfGraph,Node startEndNode)
+  
+该图是否含有环
+  
+public boolean graphHasCircle(SelfGraph selfGraph)
+
+两个节点间的最短路径
+  
+public double shortestPath2Nodes(Node startNode, Node endNode,boolean graphHasCircle)
