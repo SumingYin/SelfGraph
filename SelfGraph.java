@@ -108,7 +108,7 @@ public class SelfGraph {
         Matrix[3][4] = 1;
         Matrix[3][5] = 1;
         Matrix[4][5] = 2;
-        Matrix[5][1] = 3;
+        // Matrix[5][1] = 3;
         // 创建图
         selfGraph.createDirectedGraph(6,Matrix);
 
@@ -116,7 +116,7 @@ public class SelfGraph {
         System.out.println(selfGraph.graphHasCircle());
 
         // 测试最短路径
-        //System.out.println(selfGraph.shortestPath2Nodes("2","5",selfGraph.graphHasCircle()));
+        System.out.println(selfGraph.shortestPath2Nodes("2","5",selfGraph.graphHasCircle()));
 
         System.out.println(selfGraph);
 
