@@ -27,6 +27,9 @@ public class SelfGraph {
     // 为了方便获取节点的引用和名字
     HashMap<Node, String> nodeHashName = null;
 
+    // 添加字段，保存重新排过序后的节点索引
+    List<Node> topologicalSortList = null;
+
 
     // 初始化工作
     public SelfGraph() {
@@ -108,7 +111,7 @@ public class SelfGraph {
         Matrix[3][4] = 1;
         Matrix[3][5] = 1;
         Matrix[4][5] = 2;
-        // Matrix[5][1] = 3;
+        Matrix[5][1] = 3;
         // 创建图
         selfGraph.createDirectedGraph(6,Matrix);
 
@@ -116,10 +119,66 @@ public class SelfGraph {
         System.out.println(selfGraph.graphHasCircle());
 
         // 测试最短路径
-        System.out.println(selfGraph.shortestPath2Nodes("2","5",selfGraph.graphHasCircle()));
+        //System.out.println(selfGraph.shortestPath2Nodes("2","5",selfGraph.graphHasCircle()));
 
         System.out.println(selfGraph);
 
+    }
+
+
+    @Test
+    public void test1(){
+        // 拓扑排序测试
+        SelfGraph selfGraph = new SelfGraph();
+        // 使用默认的0、1、2、3、4、5来添加节点
+        selfGraph.addNewNode();
+        selfGraph.addNewNode();
+        selfGraph.addNewNode();
+        selfGraph.addNewNode();
+        selfGraph.addNewNode();
+        selfGraph.addNewNode();
+
+        // 添加边
+        selfGraph.addNextEdge("5","0");
+        selfGraph.addNextEdge("5","2");
+        selfGraph.addNextEdge("4","0");
+        selfGraph.addNextEdge("4","1");
+        selfGraph.addNextEdge("2","3");
+        selfGraph.addNextEdge("3","1");
+
+        // 拓扑排序
+        List<String> stringList = selfGraph.topologicalSortNames();
+        // 打印出排序后的字符，查看是否正确
+        for (String s :
+                stringList) {
+            System.out.println(s);
+        }
+        System.out.println("================================================");
+        // 拓扑排序较复杂的情况
+        SelfGraph selfGraph1 = new SelfGraph();
+        for (int i = 0; i < 8; i++) {
+            selfGraph1.addNewNode();
+        }
+
+        // 添加边
+        selfGraph1.addNextEdge("0","1");
+        selfGraph1.addNextEdge("0","2");
+        selfGraph1.addNextEdge("0","4");
+        selfGraph1.addNextEdge("2","4");
+        selfGraph1.addNextEdge("2","5");
+        selfGraph1.addNextEdge("2","6");
+        selfGraph1.addNextEdge("4","6");
+        selfGraph1.addNextEdge("6","7");
+        selfGraph1.addNextEdge("3","7");
+        selfGraph1.addNextEdge("4","7");
+        selfGraph1.addNextEdge("5","7");
+        selfGraph1.addNextEdge("0","1");
+
+        List<String> strings = selfGraph1.topologicalSortNames();
+        for (String s :
+                strings) {
+            System.out.println(s);
+        }
     }
 
     /**
@@ -268,6 +327,7 @@ public class SelfGraph {
         nodeNums++;
         Node node1 = new Node(name);
         graphNodesMap.put(name, node1);
+        nodeHashName.put(node1,name);
         return true;
     }
 
@@ -286,6 +346,14 @@ public class SelfGraph {
         list.add(endNode);
         list1.add(len);
         return addNextEdge(startNode, list, list1);
+    }
+    // 默认添加的长度是1
+    public boolean addNextEdge(String startName,String endName){
+        return addNextEdge(startName,endName,1);
+    }
+
+    public boolean addNextEdge(Node startNode,Node endNode){
+        return addNextEdge(startNode,endNode,1);
     }
 
 
@@ -483,6 +551,16 @@ public class SelfGraph {
             return false;
         }
         return addPreEdge(graphNodesMap.get(endName), graphNodesMap.get(startName), len);
+    }
+
+    // 默认添加的长度是1
+    public boolean addPreEdge(String endName,String startName){
+        return addPreEdge(endName,startName,1);
+    }
+
+    // 默认添加的长度是1
+    public boolean addPreEdge(Node endNode,Node startNode){
+        return addPreEdge(endNode,startNode,1);
     }
 
 
@@ -771,6 +849,102 @@ public class SelfGraph {
 
     }
 
+
+    public boolean topologicalSort(SelfGraph selfGraph){
+        // 返回false的情况
+        if (selfGraph == null) {
+            return false;
+        }
+        HashMap<String, Node> graphNodesMap = selfGraph.graphNodesMap;
+        // 当含有环的时候返回false
+        if(graphNodesMap == null || graphNodesMap.isEmpty() || selfGraph.graphHasCircle()){
+            return false;
+        }
+
+        selfGraph.topologicalSortList = new ArrayList<>();
+        // 充当队列的作用
+        List<Node> queue = new ArrayList<>();
+
+        // 根据当前图的所有节点制作入库表
+        Set<String> strings = graphNodesMap.keySet();
+        Iterator<String> iterator = strings.iterator();
+        // 记录当前节点的前驱节点的个数
+        while (iterator.hasNext()) {
+            Object next =  iterator.next();
+            Node node = graphNodesMap.get(next);
+            List<Node> preNodeList = node.preNodeList;
+            if(preNodeList == null || preNodeList.size() == 0){
+                node.preNodeNums = 0;
+                // 该节点的索引入栈
+                queue.add(node);
+            }else {
+                node.preNodeNums = preNodeList.size();
+            }
+        }
+        // 针对当前栈中前驱已经为0的节点进行操作
+        while(queue.size()!=0){
+
+            // 出队，并将它存入到selfGraph的topologicalSortList字段中
+            Node node = queue.get(0);
+            queue.remove(0);
+            selfGraph.topologicalSortList.add(node);
+
+            List<Node> nextNodeList = node.nextNodeList;
+            if(nextNodeList == null || nextNodeList.size() == 0){
+                continue;
+            }else {
+
+                for (Node nextNode :
+                        nextNodeList) {
+                    nextNode.preNodeNums--;
+                    if(nextNode.preNodeNums == 0){
+                        // 进队
+                        queue.add(nextNode);
+                    }
+                }
+            }
+
+
+        }
+
+        return true;
+
+    }
+
+    public boolean topologicalSort(){
+        return topologicalSort(this);
+    }
+    // 返回拓扑排序后的名字
+    public List<String> topologicalSortNames(SelfGraph selfGraph){
+        // 返回null的条件
+        if(selfGraph == null){
+            return null;
+        }
+        if(selfGraph.graphNodesMap == null || selfGraph.graphNodesMap.isEmpty()){
+            return null;
+        }
+
+        selfGraph.topologicalSort();
+        List<Node> topologicalSortList = selfGraph.topologicalSortList;
+        if(topologicalSortList.size() == 0){
+            return  null;
+        }
+        List<String> list = new ArrayList<>();
+        for (Node n :
+                topologicalSortList) {
+            list.add(selfGraph.nodeHashName.get(n));
+        }
+        return list;
+    }
+
+    public List<String> topologicalSortNames(){
+        return topologicalSortNames(this);
+    }
+
+
+
+
+
     public Double min(List<Double> a) {
         if (a == null || a.size() == 0) {
             return null;
@@ -791,6 +965,9 @@ public class SelfGraph {
 
         String name = null;
         boolean isVisited = false;
+
+        // 增加这一字段，纯粹是为了拓扑排序所使用
+        int preNodeNums = 0;
 
         // 存储后继和前驱的所有节点
         // 和二叉树很像，这里nextNodelist是该节点指向的下一个节点集合
