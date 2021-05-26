@@ -115,7 +115,7 @@ public class SelfGraph {
         // 创建图
         selfGraph.createDirectedGraph(6,Matrix);
 
-        // 测试应为无环
+        // 测试应为有环
         System.out.println(selfGraph.graphHasCircle());
 
         // 测试最短路径
